@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "277022986414",
+    "firebase_url": "https://alcjournal-afb19.firebaseio.com",
+    "project_id": "alcjournal-afb19",
+    "storage_bucket": "alcjournal-afb19.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:277022986414:android:d149ed64005599bd",
+        "android_client_info": {
+          "package_name": "com.syst.apps.myjournalalc"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "277022986414-vhf7bdhubvothsk3me1mtmjio4n4rlrq.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBUeOl_7sB7hDD0iN0gymG6cMUTCtbYr5c"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
