@@ -40,6 +40,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.HashMap;
 import java.util.List;
@@ -72,7 +73,7 @@ public class StartActivity extends AppCompatActivity implements GoogleApiClient.
         recyVw.setHasFixedSize(true);
         recyVw.setLayoutManager(new LinearLayoutManager(this));
         adapter = new JournalAdapter(this);
-
+        recyVw.setAdapter(adapter);
 
         addFab = findViewById(R.id.fab);
         addFab.setOnClickListener(new View.OnClickListener() {
@@ -98,7 +99,7 @@ public class StartActivity extends AppCompatActivity implements GoogleApiClient.
             }
         });
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestIdToken(getString(R.string.clientid))
+                .requestIdToken(getString(R.string.webclientid))
                 .requestEmail()
                 .build();
 
@@ -139,8 +140,13 @@ public class StartActivity extends AppCompatActivity implements GoogleApiClient.
     protected void onResume() {
         super.onResume();
         adapter.clear();
-        adapter.addData(myDbHelper.getJournals(10));
-        recyVw.setAdapter(adapter);
+        //adapter.addData(myDbHelper.getJournals(10));
+
+        if(adapter.getItemCount()>0){
+            findViewById(R.id.nrftv).setVisibility(View.GONE);
+        }
+        else
+            findViewById(R.id.nrftv).setVisibility(View.VISIBLE);
 
         SwipeHelper swipeHelper = new SwipeHelper(this, recyVw) {
             @Override
@@ -246,6 +252,7 @@ public class StartActivity extends AppCompatActivity implements GoogleApiClient.
         // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
         if (requestCode == RC_SIGN_IN) {
             GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
+            myDbHelper.showLog("GoogleSignInResult: "+result.getStatus());
             if (result.isSuccess()) {
                 // Google Sign In was successful, authenticate with Firebase
                 GoogleSignInAccount account = result.getSignInAccount();
@@ -267,6 +274,7 @@ public class StartActivity extends AppCompatActivity implements GoogleApiClient.
         signOut();
     }
     private void signOut() {
+        myDbHelper.showSnack("Signing Out ...",signBut);
         mAuth.signOut();
         updateUI(null);
         GsignOut();
@@ -298,7 +306,7 @@ public class StartActivity extends AppCompatActivity implements GoogleApiClient.
                         } else {
                             // If sign in fails, display a message to the user.
                             try {
-                                //myDbHelper.showLog("signInWithCredential:failure    "+ task.getException());
+                                myDbHelper.showLog("signInWithCredential:failure    "+ task.getException());
                                 myDbHelper.showSnack("Authentication Failed: "+task.getException(),signBut);
                             } catch (Exception e) {
                                 myDbHelper.showLog(e.toString());
@@ -329,9 +337,10 @@ public class StartActivity extends AppCompatActivity implements GoogleApiClient.
                             Journal dwnJournal = dataSnapshot.getValue(Journal.class);
                             String journalKey = dataSnapshot.getKey();
                             //myDbHelper.showLog("journalKey: "+commentKey);
-                            myDbHelper.showLog("journal jdate: "+dwnJournal.getJdate());
+                           // myDbHelper.showLog("journal jdate: "+dwnJournal.getJdate());
                             dwnJournal.setJkey(journalKey);
-                            myDbHelper.showLog("OnChildAdded Journal: " + myDbHelper.addJournal(dwnJournal));
+                            myDbHelper.addJournal(dwnJournal);
+                           // myDbHelper.showLog("OnChildAdded Journal: " + myDbHelper.addJournal(dwnJournal));
                         }
 
                         @Override
@@ -339,16 +348,20 @@ public class StartActivity extends AppCompatActivity implements GoogleApiClient.
                             Journal dwnJournal = dataSnapshot.getValue(Journal.class);
                             String journalKey = dataSnapshot.getKey();
                             //myDbHelper.showLog("journalKey: "+commentKey);
-                            myDbHelper.showLog("journal jdate: "+dwnJournal.getJdate());
+                            //myDbHelper.showLog("journal jdate: "+dwnJournal.getJdate());
                             dwnJournal.setJkey(journalKey);
-                            myDbHelper.showLog("onChildChanged Journal: " + myDbHelper.addJournal(dwnJournal));
+                            myDbHelper.addJournal(dwnJournal);
+                            //myDbHelper.showLog("onChildChanged Journal: " + myDbHelper.addJournal(dwnJournal));
+                            /*if(adapter.getItemCount()<=0){
+                                adapter.ad
+                            }*/
                         }
 
                         @Override
                         public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
                             Journal dwnJournal = dataSnapshot.getValue(Journal.class);
                             String journalKey = dataSnapshot.getKey();
-                            myDbHelper.showLog("journal jdate: "+dwnJournal.getJdate());
+                            //myDbHelper.showLog("journal jdate: "+dwnJournal.getJdate());
                             dwnJournal.setJkey(journalKey);
                             myDbHelper.showLog("Delete Journal: " + myDbHelper.delJournal(dwnJournal));
                         }
@@ -366,8 +379,8 @@ public class StartActivity extends AppCompatActivity implements GoogleApiClient.
 
                 }
             }, 3000);
-            //final Query myTopPostsQuery = mDatabase.child("user-journals").child(user.getUid());//.orderByChild("starCount");
-            /*myTopPostsQuery.addValueEventListener(new ValueEventListener() {
+            final Query myTopPostsQuery = mDatabase.child("user-journals").child(user.getUid());//.orderByChild("starCount");
+            myTopPostsQuery.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     for(DataSnapshot jsnap: dataSnapshot.getChildren()){
@@ -382,6 +395,11 @@ public class StartActivity extends AppCompatActivity implements GoogleApiClient.
                     }
                     adapter.clear();
                     adapter.addData(myDbHelper.getJournals(10));
+                    if(adapter.getItemCount()>0){
+                        findViewById(R.id.nrftv).setVisibility(View.GONE);
+                    }
+                    else
+                        findViewById(R.id.nrftv).setVisibility(View.VISIBLE);
 
                 }
 
@@ -389,11 +407,17 @@ public class StartActivity extends AppCompatActivity implements GoogleApiClient.
                 public void onCancelled(@NonNull DatabaseError databaseError) {
                     myDbHelper.showLog("startActy() "+databaseError.toString());
                 }
-            });*/
+            });
 
 
 
         }
+        else {
+            signBut.setText(getString(R.string.signin));
+            adapter.clear();
+            findViewById(R.id.nrftv).setVisibility(View.VISIBLE);
+        }
+
 
 
     }

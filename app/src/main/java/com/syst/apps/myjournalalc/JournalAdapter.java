@@ -35,6 +35,7 @@ public class JournalAdapter extends RecyclerView.Adapter<JournalViewHolder> {
 
     public void clear(){
         mList.clear();
+        notifyDataSetChanged();
     }
 
     public void addData(ArrayList<Journal> jlist){

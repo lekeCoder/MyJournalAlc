@@ -15,7 +15,10 @@ import android.view.View;
 
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Locale;
 
 public class MyDbHelper extends SQLiteOpenHelper {
 
@@ -80,7 +83,7 @@ public class MyDbHelper extends SQLiteOpenHelper {
 
     public boolean addJournal(Journal j) {
         try {
-            showLog(j.toString()+"\tisDigit: "+j.getJid());
+            //showLog(j.toString()+"\tisDigit: "+j.getJid());
 
             SQLiteDatabase db = this.getWritableDatabase();
 
@@ -120,18 +123,27 @@ public class MyDbHelper extends SQLiteOpenHelper {
         ArrayList<Journal> nots = new ArrayList<>();
         try{
             SQLiteDatabase db = this.getReadableDatabase();
-            String selQuery = "SELECT * FROM "+JR_TB +"  ORDER BY datetime("+JDATE+") DESC ";
+            String selQuery = "SELECT * FROM "+JR_TB +"  ORDER BY "+JDATE+" ASC";
             Cursor c = db.rawQuery(selQuery,null);
             //wrd.showLog("getVV  "+c.getCount());
+            Calendar cal = Calendar.getInstance();
             if(c.getCount()>0 && c.moveToFirst()) {
                 do {
                     Journal j = new Journal();
                     j.setJid(c.getInt(c.getColumnIndex(JID)) + "");
                     j.setJentry(c.getString(c.getColumnIndex(JCON)));
-                    j.setJdate(c.getString(c.getColumnIndex(JDATE)));
+                    try {
+                        cal.setTimeInMillis(Long.parseLong(c.getString(c.getColumnIndex(JDATE))));
+                        String tStamp = new SimpleDateFormat("dd-MMM-yyyy", Locale.UK).format(cal.getTime());
+                        j.setJdate(tStamp);
+                    } catch (NumberFormatException e) {
+                        //e.printStackTrace();
+                        j.setJdate(c.getString(c.getColumnIndex(JDATE)));
+                    }
                     j.setJkey(c.getString(c.getColumnIndex(JKEY)));
                     j.setJmod(c.getString(c.getColumnIndex(JMOD)));
                     nots.add(j);
+                    //showLog(j.toString());
 
                 }while (c.moveToNext());
                 c.close();

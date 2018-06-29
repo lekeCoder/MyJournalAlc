@@ -19,6 +19,8 @@
     <string name="signin">Sign in &amp; Sync</string>
     <string name="crjl">Save a Note</string>
     <string name="save">Save</string>
-    <string name="clientid">47802341485-hk7codg7tjapbil8ndcq453cletb43sg.apps.googleusercontent.com</string>
+    <string name="webclientid">277022986414-vhf7bdhubvothsk3me1mtmjio4n4rlrq.apps.googleusercontent.com</string>
     <string name="nrf">No Record Found</string>
+    <string name="wyt">write your thoughts here</string>
+    <string name="ddate">Pick a date</string>
 </resources>

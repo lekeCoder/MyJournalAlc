@@ -77,8 +77,9 @@ public class CreateEntryActivity extends AppCompatActivity implements DatePicker
         cal.set(Calendar.MONTH, month);
         cal.set(Calendar.DAY_OF_MONTH,dayOfMonth);
 
-        String tStamp = new SimpleDateFormat("dd-MMM-yyyy", Locale.UK).format(cal.getTime());
+        String tStamp = new SimpleDateFormat("dd-MM-yyyy", Locale.UK).format(cal.getTime());
         pickDateTv.setText(tStamp);
+        j.setJdate(cal.getTimeInMillis()+"");
     }
 
     @Override
@@ -101,7 +102,7 @@ public class CreateEntryActivity extends AppCompatActivity implements DatePicker
             String dt = pickDateTv.getText().toString();
             String note = noteEditTv.getText().toString();
             if(!dt.equals("") && !note.equals("")){
-                j.setJdate(dt);
+                //j.setJdate(dt);
                 j.setJentry(note);
                 j.setJmod((noteText.equalsIgnoreCase(note)? "0":"1"));
                 if(j.getJkey().equals(""))
