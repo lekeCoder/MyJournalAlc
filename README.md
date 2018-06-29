@@ -9,4 +9,10 @@ Features includes:
 5. Sync journals across devices using the same google authentication data
 6. Firebase realtime database integrated
 
+Screenshots:
+
+![ScreenShot](/ScreenShot/device-2018-06-29-224709.png)
+![ScreenShot](/ScreenShot/device-2018-06-29-224818.png)
+![ScreenShot](/ScreenShot/device-2018-06-29-235207.png)
+
 
